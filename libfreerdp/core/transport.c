@@ -1219,6 +1219,13 @@ DWORD WINAPI transport_client_thread(LPVOID arg)
 				rdp_set_error_info(rdp, ERRINFO_PEER_DISCONNECTED);
 				break;
 			}
+
+			if (freerdp_shall_disconnect(context->instance))
+			{
+				WLog_ERR(TAG, "freerdp_shall_disconnect()");
+				rdp_set_error_info(rdp, ERRINFO_PEER_DISCONNECTED);
+				break;
+			}
 		}
 		else
 		{
@@ -1230,6 +1237,8 @@ DWORD WINAPI transport_client_thread(LPVOID arg)
 			dwExitCode = 1;
 			break;
 		}
+
+		Sleep(5);
 	}
 
 out:
