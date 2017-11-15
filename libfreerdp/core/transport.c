@@ -1196,6 +1196,13 @@ static void* transport_client_thread(void* arg)
 				rdp_set_error_info(rdp, ERRINFO_PEER_DISCONNECTED);
 				break;
 			}
+
+			if (freerdp_shall_disconnect(context->instance))
+			{
+				WLog_ERR(TAG, "freerdp_shall_disconnect()");
+				rdp_set_error_info(rdp, ERRINFO_PEER_DISCONNECTED);
+				break;
+			}
 		}
 		else
 		{
@@ -1207,6 +1214,8 @@ static void* transport_client_thread(void* arg)
 			dwExitCode = 1;
 			break;
 		}
+
+		Sleep(5);
 	}
 
 out:
