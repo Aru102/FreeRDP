@@ -1216,8 +1216,8 @@ DWORD WINAPI transport_client_thread(LPVOID arg)
 				if (freerdp_get_last_error(context) == FREERDP_ERROR_SUCCESS)
 					WLog_Print(transport->log, WLOG_ERROR, "freerdp_check_event_handles()");
 
-				rdp_set_error_info(rdp, ERRINFO_PEER_DISCONNECTED);
-				break;
+				//rdp_set_error_info(rdp, ERRINFO_PEER_DISCONNECTED);
+				//break;
 			}
 
 			if (freerdp_shall_disconnect(context->instance))

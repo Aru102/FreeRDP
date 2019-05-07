@@ -12,9 +12,9 @@
 cd ..
 git clone https://github.com/openssl/openssl
 ```
-* Checkout tag `OpenSSL_1_0_2m`.
+* Checkout tag `OpenSSL_1_0_2r`.
 ```
-git checkout OpenSSL_1_0_2m
+git checkout OpenSSL_1_0_2r
 ```
 * Run x86 build script.  It should generate the build to `..\OpenSSL-VC-32`.
 ```
