@@ -75,6 +75,8 @@ void proxy_read_environment(rdpSettings* settings, char* envname);
 BOOL proxy_prepare(rdpSettings* settings, const char** lpPeerHostname, UINT16* lpPeerPort,
                    const char** lpProxyUsername, const char** lpProxyPassword)
 {
+	return FALSE;
+
 	/* For TSGateway, find the system HTTPS proxy automatically */
 	if (!settings->ProxyType)
 		proxy_read_environment(settings, "https_proxy");
