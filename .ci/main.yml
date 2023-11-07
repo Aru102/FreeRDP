@@ -1,14 +1,5 @@
 name: $(Date:yyyyMMdd)$(Rev:-rr)
 
-trigger: 
-  - uipath
-
-parameters:
-  - name: PublishNuGets
-    displayName: 'Publish the NuGet Packages'
-    type: boolean
-    default: false
-
 pool:
   vmImage: 'windows-2022'
   demands:
@@ -21,36 +12,17 @@ steps:
 
 - task: NuGetAuthenticate@0
 
-- script: |
-    call .ci\Scripts\getVars
-   
-    cmake --version
-    perl -v
-    msbuild -version
-
-    set
-  name: getVersions
-
-- script: .\.ci\Scripts\getOpenSsl
-  displayName: getOpenSsl
-- script: .\.ci\Scripts\buildOpenSsl
-  displayName: buildOpenSsl
-- script: .\.ci\Scripts\buildFreeRDP Release
-  displayName: buildFreeRDP
-
 - task: NuGetCommand@2
   displayName: restore
   inputs:
     command: 'restore'
-    restoreSolution: 'UiPath.FreeRdpClient\UiPath.FreeRdpClient.sln'
+    restoreSolution: 'UiPath.FreeRdpClient\UiPath.SessionTools.sln'
 
 - task: MSBuild@1
   displayName: build
   inputs:
-    solution: 'UiPath.FreeRdpClient\UiPath.FreeRdpClient.sln' 
-    platform: 'x64'
+    solution: 'UiPath.FreeRdpClient\UiPath.SessionTools.sln' 
     configuration: 'Release'
-    msbuildArchitecture: 'x64'
     msbuildArguments: "/p:VersionSuffix=$(Build.BuildNumber)"
 
 - task: DotNetCoreCLI@2
@@ -60,55 +32,3 @@ steps:
     configuration: 'Release'
     arguments: '--no-build --configuration Release'
     projects: 'UiPath.FreeRdpClient\**\*.Tests.csproj'
-
-- task: MSBuild@1
-  displayName: restore (UseNugetRef)
-  inputs:
-    solution: 'UiPath.FreeRdpClient\UiPath.FreeRdpClient.sln' 
-    platform: 'x64'
-    configuration: 'Release'
-    msbuildArchitecture: 'x64'
-    msbuildArguments: "/t:restore /p:VersionSuffix=$(Build.BuildNumber) /p:UseNugetRef=true"
-
-- task: MSBuild@1
-  displayName: build (UseNugetRef)
-  inputs:
-    solution: 'UiPath.FreeRdpClient\UiPath.FreeRdpClient.sln' 
-    platform: 'x64'
-    configuration: 'Release'
-    msbuildArchitecture: 'x64'
-    msbuildArguments: "/p:VersionSuffix=$(Build.BuildNumber) /p:UseNugetRef=true"
-
-- task: DotNetCoreCLI@2
-  displayName: 'test (UseNugetRef)'
-  inputs:
-    command: 'test'
-    configuration: 'Release'
-    arguments: '--no-build --configuration Release /p:UseNugetRef=true'
-    projects: 'UiPath.FreeRdpClient\**\*.Tests.csproj'
-
-- task: NuGetCommand@2
-  ${{ if eq(parameters.PublishNuGets, true) }}:
-    displayName: '(Enabled) NuGet Push to UiPath-Internal'
-    condition: succeeded()
-  ${{ if eq(parameters.PublishNuGets, false) }}:
-    displayName: '(Disabled) NuGet Push to UiPath-Internal'
-    condition: false
-  inputs:
-    command: push
-    packagesToPush: 'Output\nugets\UiPath.FreeRdpClient.*.nupkg;Output\nugets\UiPath.SessionTools.*.nupkg'
-    publishVstsFeed: '5b98d55c-1b14-4a03-893f-7a59746f1246/788028a9-5a01-48ee-b925-3af51ae46294'
-
-- task: PublishPipelineArtifact@1
-  name: publishFreeRDPOnly
-  inputs:
-    targetPath: '.' 
-    artifactName: 'freeRdpOnly' 
-    parallel: true
-
-- task: PublishPipelineArtifact@1
-  name: publishOpenSSL
-  inputs:
-    targetPath: '..\OpenSSL-VC-64' 
-    artifactName: 'openSSL' 
-    parallel: true

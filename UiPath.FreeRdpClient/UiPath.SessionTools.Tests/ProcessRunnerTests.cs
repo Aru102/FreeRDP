@@ -1,8 +1,49 @@
-﻿namespace UiPath.SessionTools.Tests;
+﻿using Xunit.Abstractions;
+
+namespace UiPath.SessionTools.Tests;
 
 [Trait("Subject", nameof(ProcessRunner))]
 public class ProcessRunnerTests
 {
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
+    private readonly ProcessRunner _runner = new();
+    private readonly ITestOutputHelper _testOutput;
+
+    public ProcessRunnerTests(ITestOutputHelper testOutput)
+    {
+        _testOutput = testOutput;
+    }
+
+    [Theory]
+    [ClassData(typeof(StressTestCases))]
+    public async Task StressTest(int port)
+    {
+        using var cts = new CancellationTokenSource(Timeout);
+
+        var act = async () =>
+        {
+            var report = await _runner.Run(
+                fileName: "cmd.exe",
+                arguments: $"/c netsh interface portproxy add v4tov4 listenaddress=127.0.0.1 listenport={port} connectaddress=127.0.0.1 connectport=3389",
+                cts.Token);
+
+            _testOutput.WriteLine(report.ToString());
+        };
+
+        await act.ShouldNotThrowAsync();
+    }
+
+    public class StressTestCases : TheoryData<int>
+    {
+        public StressTestCases()
+        {
+            foreach (int port in Enumerable.Range(44_444, count: 10000))
+            {
+                Add(port);
+            }
+        }
+    }
+
     [Fact]
     public async Task Run_ShouldProduceAConsistentReport_WhenCancellationOccurs()
     {
@@ -13,13 +54,11 @@ public class ProcessRunnerTests
         var runTime = TimeSpan.FromDays(1);
         var deadline = TimeSpan.FromMinutes(1);
 
-        ProcessRunner runner = new();
-
         using var _ = ProcessRunner.TimeoutToken(deadline, out var ct);
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         var monitor = new StdMonitor();
 
-        var task = runner.RunCore(
+        var task = _runner.RunCore(
             fileName: "cmd.exe",
             arguments: $"/c echo {reachable1} & echo {reachable2} & ping -n {runTime.TotalSeconds} 127.0.0.1 & echo {unreachable}",
             workingDirectory: "",

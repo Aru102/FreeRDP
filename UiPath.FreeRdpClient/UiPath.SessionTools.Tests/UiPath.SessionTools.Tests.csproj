@@ -11,6 +11,30 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="AssertionExtensions.cs" />
+	  <Compile Remove="EnsureUserIsSetupTests.cs" />
+	  <Compile Remove="InternalCommandsTests.cs" />
+	  <Compile Remove="LoggingFormattingTests.cs" />
+	  <Compile Remove="ProcessRunnerExtensionsTests.cs" />
+	  <Compile Remove="PumpTests.cs" />
+	  <Compile Remove="TestHelpers.cs" />
+	  <Compile Remove="UserChecks.cs" />
+	  <Compile Remove="WtsTests.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="AssertionExtensions.cs" />
+	  <None Include="EnsureUserIsSetupTests.cs" />
+	  <None Include="InternalCommandsTests.cs" />
+	  <None Include="LoggingFormattingTests.cs" />
+	  <None Include="ProcessRunnerExtensionsTests.cs" />
+	  <None Include="PumpTests.cs" />
+	  <None Include="TestHelpers.cs" />
+	  <None Include="UserChecks.cs" />
+	  <None Include="WtsTests.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
       <PackageReference Include="Microsoft.SourceLink.GitHub" />
       <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.3.0" />
 	  <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
