@@ -1,4 +1,6 @@
 @echo off
+if defined freeRdpDir (exit /b)
+
 set openSSLTag=OpenSSL_1_0_2u
 
 set freeRdpDir=%~dp0\..\..
@@ -14,4 +16,5 @@ for /f "usebackq delims=" %%i in (`%vswhere% -prerelease -latest -property insta
   set vsDir=%%i
 )
 
-call "%vsdir%\Common7\Tools\vsdevcmd.bat"
+call "%vsdir%\Common7\Tools\vsdevcmd.bat" -arch=amd64
+
