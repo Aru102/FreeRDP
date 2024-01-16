@@ -22,8 +22,16 @@ From time to time there is a need to merge the changes from the original repo in
   git push --tags          # this will push the new tags to UiPath/FreeRdp
   ```
 - checkout the `uipath` branch
-- ‼️ create a new branch to backup the current state (i.e. `support/before_update_to_2_11_2`)
+- ‼️ create a new support branch with the name format
+
+  ```
+  robot/support/before_update_to_<NEW BASE GIT TAG>
+  ```  
+  (i.e. `robot/support/before_update_to_2_11_2`)
+  
 - create **and checkout** a new branch that will be used as a work branch (i.e. `feat/update_to_2_11_2`)
+
+  > **NOTE** Right at this instant, this and the support branch should point to the same Git Commit as the `uipath` branch.
   
 - identify the Commit Hash, which is the parent of our 1st customization Commit
 
