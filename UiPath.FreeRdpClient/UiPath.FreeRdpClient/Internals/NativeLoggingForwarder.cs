@@ -32,6 +32,7 @@ internal sealed class NativeLoggingForwarder : IDisposable
         "history buffer index out of range",//10+
         "history buffer overflow",
         "fastpath_recv_update() - -1",
+        "Primary Drawing Order",
     };
 
     public NativeLoggingForwarder(ILoggerFactory loggerFactory)
@@ -70,7 +71,7 @@ internal sealed class NativeLoggingForwarder : IDisposable
 
     private bool FilterLogs(LogLevel logLevel, string message)
     {
-        if (logLevel is LogLevel.Error
+        if ((logLevel is LogLevel.Error or LogLevel.Warning)
             && FilterRemoveStartsWith.Any(message.StartsWith))
             return false;
 
