@@ -9,40 +9,24 @@ From time to time there is a need to merge the changes from the original repo in
 | --- | --- |
 |**Original corresponding commit hash:**| `a38c1be9eee39a9bc22b511fffe96e63fdf8ebe7` |
 
-## Steps for performing the update
+#### Updating the fork is done on a dev machine and involves rebasing our changes on top of the new tag/branch from the original repo and **force pushing** the `uipath` branch.
 
-- consider the new Base Git Tag from the official repo onto which we'll rebase our changes
-  
-  > **NOTE** For simplicity, let's consider `2.11.2` is the tag we want to rebase onto.
-  
-- sync our fork to include that Git Tag. On local, after cloning UiPath/FreeRdp, execute the following:
+❗The state before the update must be saved in a support branch, named `robot/support/before_update_to_<NEW BASE GIT TAG>`, where `<NEW BASE GIT TAG>` is the tag from the original repo onto which we'll rebase our changes.
 
-  ```pwsh
-  git fetch --tags --all   # this will fetch all tags from all upstreams, including from FreeRdp/FreeRdp
-  git push --tags          # this will push the new tags to UiPath/FreeRdp
-  ```
-- checkout the `uipath` branch
-- ‼️ create a new support branch with the name format
+The tags from the original repo must be fetched from the original repo and pushed to our fork:
+```pwsh
+git fetch --tags --all
+git push --tags
+```
 
-  ```
-  robot/support/before_update_to_<NEW BASE GIT TAG>
-  ```  
-  (i.e. `robot/support/before_update_to_2_11_2`)
-  
-- create **and checkout** a new branch that will be used as a work branch (i.e. `feat/update_to_2_11_2`)
+A work branch should be created from `uipath` and used in the validation phase. It's name would be `feat/update_to_<NEW BASE GIT TAG>`.
+After checking out the branch, the rebase should be performed using the following command:
+```pwsh
+git rebase --onto <NEW BASE Git Tag> <Our 1st customization Commit's Hash> <The work branch>
+```
+In this phase we have the opportunity the review the new state, run CI/CD and fix any issues that might arise.
 
-  > **NOTE** Right at this instant, this and the support branch should point to the same Git Commit as the `uipath` branch.
-  
-- identify the Commit Hash, which is the parent of our 1st customization Commit
-
-  > **NOTE** At the time of writing, our 1st customization Commit's message's 1st line is `Add uipath changes from previous version (2.0.0-rc3)`
-
-- Make sure you've checked out the work branch (i.e. `feat/update_to_2_11_2), and run **git rebase --onto**, so that all UiPath customization commits are replayed onto the new Base Git Tag:
-
-  ```pwsh
-  git rebase --onto <NEW BASE Git Tag> <Our 1st customization Commit's Hash> <The work branch>
-  ```
-
+After the validation phase, the `uipath` branch should point to the work branch's HEAD and be **force pushed** to our fork.
 
 ### Build instructions
 * Visual Studio 2022 installed in `C:\Program Files` required.  
