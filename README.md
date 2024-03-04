@@ -15,18 +15,19 @@ From time to time there is a need to merge the changes from the original repo in
 
 The tags from the original repo must be fetched from the original repo and pushed to our fork:
 ```pwsh
+git remote add upstream https://github.com/FreeRDP/FreeRDP.git
 git fetch --tags --all
 git push --tags
 ```
 
-A work branch should be created from `uipath` and used in the validation phase. It's name would be `feat/update_to_<NEW BASE GIT TAG>`.
+A work branch should be created from `uipath` and used in the validation phase. Its name would be `feat/update_to_<NEW BASE GIT TAG>`.
 After checking out the branch, the rebase should be performed using the following command:
 ```pwsh
 git rebase --onto <NEW BASE Git Tag> <Our 1st customization Commit's Hash> <The work branch>
 ```
 In this phase we have the opportunity the review the new state, run CI/CD and fix any issues that might arise.
 
-After the validation phase, the `uipath` branch should point to the work branch's HEAD and be **force pushed** to our fork.
+After validating the `feat/update_to_<NEW BASE GIT TAG>` branch, reset the `uipath` branch to it and force push it.
 
 ### Build instructions
 * Visual Studio 2022 installed in `C:\Program Files` required.  
